@@ -21,9 +21,17 @@ PROG4A_TARGET = bin/wait_waitpid_demo
 PROG4B_SRC = src/zombie_process.c
 PROG4B_TARGET = bin/zombie_process
 
+# Practical 5A - Producer Consumer using Anonymous Pipe
+PROG5_SRC = src/prog5.c
+PROG5_TARGET = bin/prog5
+
+# Practical 5B - ls -l | grep ".c"
+LSGREP_SRC = src/ls_grep_pipe.c
+LSGREP_TARGET = bin/ls_grep_pipe
+
 
 # Build all programs
-all: $(TARGET) $(PROG2_TARGET) $(PROG3_TARGET) $(PROG4A_TARGET) $(PROG4B_TARGET)
+all: $(TARGET) $(PROG2_TARGET) $(PROG3_TARGET) $(PROG4A_TARGET) $(PROG4B_TARGET) $(PROG5_TARGET) $(LSGREP_TARGET)
 
 
 # Build ShellForge
@@ -56,6 +64,18 @@ $(PROG4B_TARGET): $(PROG4B_SRC)
 	$(CC) $(CFLAGS) $(PROG4B_SRC) -o $(PROG4B_TARGET)
 
 
+# Build Practical 5A - Producer Consumer
+$(PROG5_TARGET): $(PROG5_SRC)
+	mkdir -p bin
+	$(CC) $(CFLAGS) $(PROG5_SRC) -o $(PROG5_TARGET)
+
+
+# Build Practical 5B - ls | grep
+$(LSGREP_TARGET): $(LSGREP_SRC)
+	mkdir -p bin
+	$(CC) $(CFLAGS) $(LSGREP_SRC) -o $(LSGREP_TARGET)
+
+
 # Run ShellForge
 run:
 	./$(TARGET)
@@ -79,6 +99,16 @@ run-prog4a:
 # Run Practical 4B
 run-prog4b:
 	./$(PROG4B_TARGET)
+
+
+# Run Practical 5A - Producer Consumer
+run-prog5:
+	./$(PROG5_TARGET)
+
+
+# Run Practical 5B - ls | grep
+run-lsgrep:
+	./$(LSGREP_TARGET)
 
 
 # Clean compiled files
