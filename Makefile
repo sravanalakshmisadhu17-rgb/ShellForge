@@ -1,116 +1,175 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -g -Iinclude
 
-# ShellForge main program
-SRC = src/main.c
-TARGET = bin/shellforge
+BIN = bin
 
-# Practical 2 - File Copy using System Calls
-PROG2_SRC = src/prog2.c
-PROG2_TARGET = bin/prog2
-
-# Practical 3 - Process Creation using fork()
-PROG3_SRC = src/process.c
-PROG3_TARGET = bin/process
-
-# Practical 4A - wait() and waitpid()
-PROG4A_SRC = src/wait_waitpid_demo.c
-PROG4A_TARGET = bin/wait_waitpid_demo
-
-# Practical 4B - Zombie Process
-PROG4B_SRC = src/zombie_process.c
-PROG4B_TARGET = bin/zombie_process
-
-# Practical 5A - Producer Consumer using Anonymous Pipe
-PROG5_SRC = src/prog5.c
-PROG5_TARGET = bin/prog5
-
-# Practical 5B - ls -l | grep ".c"
-LSGREP_SRC = src/ls_grep_pipe.c
-LSGREP_TARGET = bin/ls_grep_pipe
+.PHONY: all run clean \
+        run-prog2 run-process run-wait run-zombie \
+        run-prog5 run-ls-grep \
+        run-fifo-server run-fifo-client run-signal
 
 
-# Build all programs
-all: $(TARGET) $(PROG2_TARGET) $(PROG3_TARGET) $(PROG4A_TARGET) $(PROG4B_TARGET) $(PROG5_TARGET) $(LSGREP_TARGET)
+# ============================================================
+# ALL
+# ============================================================
+
+all: $(BIN)/shellforge \
+     $(BIN)/prog2 \
+     $(BIN)/process \
+     $(BIN)/wait_waitpid_demo \
+     $(BIN)/zombie_process \
+     $(BIN)/prog5 \
+     $(BIN)/ls_grep_pipe \
+     $(BIN)/prog6_fifo_server \
+     $(BIN)/prog6_fifo_client \
+     $(BIN)/signal_handler
 
 
-# Build ShellForge
-$(TARGET): $(SRC)
-	mkdir -p bin
-	$(CC) $(CFLAGS) $(SRC) -o $(TARGET)
+# ============================================================
+# WEEK 1 - SHELLFORGE REPL
+# ============================================================
+
+$(BIN)/shellforge: src/main.c include/shell.h
+	mkdir -p $(BIN)
+	$(CC) $(CFLAGS) -o $(BIN)/shellforge src/main.c
 
 
-# Build Practical 2
-$(PROG2_TARGET): $(PROG2_SRC)
-	mkdir -p bin
-	$(CC) $(CFLAGS) $(PROG2_SRC) -o $(PROG2_TARGET)
+run: $(BIN)/shellforge
+	./$(BIN)/shellforge
 
 
-# Build Practical 3
-$(PROG3_TARGET): $(PROG3_SRC)
-	mkdir -p bin
-	$(CC) $(CFLAGS) $(PROG3_SRC) -o $(PROG3_TARGET)
+# ============================================================
+# PRACTICAL 2 - FILE COPY
+# ============================================================
+
+$(BIN)/prog2: src/prog2.c
+	mkdir -p $(BIN)
+	$(CC) $(CFLAGS) -o $(BIN)/prog2 src/prog2.c
 
 
-# Build Practical 4A
-$(PROG4A_TARGET): $(PROG4A_SRC)
-	mkdir -p bin
-	$(CC) $(CFLAGS) $(PROG4A_SRC) -o $(PROG4A_TARGET)
+run-prog2: $(BIN)/prog2
+	./$(BIN)/prog2
 
 
-# Build Practical 4B
-$(PROG4B_TARGET): $(PROG4B_SRC)
-	mkdir -p bin
-	$(CC) $(CFLAGS) $(PROG4B_SRC) -o $(PROG4B_TARGET)
+# ============================================================
+# PRACTICAL 3 - FORK / PROCESS
+# ============================================================
+
+$(BIN)/process: src/process.c
+	mkdir -p $(BIN)
+	$(CC) $(CFLAGS) -o $(BIN)/process src/process.c
 
 
-# Build Practical 5A - Producer Consumer
-$(PROG5_TARGET): $(PROG5_SRC)
-	mkdir -p bin
-	$(CC) $(CFLAGS) $(PROG5_SRC) -o $(PROG5_TARGET)
+run-process: $(BIN)/process
+	./$(BIN)/process
 
 
-# Build Practical 5B - ls | grep
-$(LSGREP_TARGET): $(LSGREP_SRC)
-	mkdir -p bin
-	$(CC) $(CFLAGS) $(LSGREP_SRC) -o $(LSGREP_TARGET)
+# ============================================================
+# PRACTICAL 4 - WAIT / WAITPID
+# ============================================================
+
+$(BIN)/wait_waitpid_demo: src/wait_waitpid_demo.c
+	mkdir -p $(BIN)
+	$(CC) $(CFLAGS) -o $(BIN)/wait_waitpid_demo src/wait_waitpid_demo.c
 
 
-# Run ShellForge
-run:
-	./$(TARGET)
+run-wait: $(BIN)/wait_waitpid_demo
+	./$(BIN)/wait_waitpid_demo
 
 
-# Run Practical 2
-run-prog2:
-	./$(PROG2_TARGET) src/input.txt src/output.txt
+# ============================================================
+# PRACTICAL 4 - ZOMBIE PROCESS
+# ============================================================
+
+$(BIN)/zombie_process: src/zombie_process.c
+	mkdir -p $(BIN)
+	$(CC) $(CFLAGS) -o $(BIN)/zombie_process src/zombie_process.c
 
 
-# Run Practical 3
-run-prog3:
-	./$(PROG3_TARGET)
+run-zombie: $(BIN)/zombie_process
+	./$(BIN)/zombie_process
 
 
-# Run Practical 4A
-run-prog4a:
-	./$(PROG4A_TARGET)
+# ============================================================
+# PRACTICAL 5 - ANONYMOUS PIPE PRODUCER / CONSUMER
+# ============================================================
+
+$(BIN)/prog5: src/prog5.c
+	mkdir -p $(BIN)
+	$(CC) $(CFLAGS) -o $(BIN)/prog5 src/prog5.c
 
 
-# Run Practical 4B
-run-prog4b:
-	./$(PROG4B_TARGET)
+run-prog5: $(BIN)/prog5
+	./$(BIN)/prog5
 
 
-# Run Practical 5A - Producer Consumer
-run-prog5:
-	./$(PROG5_TARGET)
+# ============================================================
+# PRACTICAL 5 - ls | grep PIPELINE
+# ============================================================
+
+$(BIN)/ls_grep_pipe: src/ls_grep_pipe.c
+	mkdir -p $(BIN)
+	$(CC) $(CFLAGS) -o $(BIN)/ls_grep_pipe src/ls_grep_pipe.c
 
 
-# Run Practical 5B - ls | grep
-run-lsgrep:
-	./$(LSGREP_TARGET)
+run-ls-grep: $(BIN)/ls_grep_pipe
+	./$(BIN)/ls_grep_pipe
 
 
-# Clean compiled files
+# ============================================================
+# PRACTICAL 6 - FIFO SERVER
+# ============================================================
+
+$(BIN)/prog6_fifo_server: src/prog6_fifo_server.c
+	mkdir -p $(BIN)
+	$(CC) $(CFLAGS) -o $(BIN)/prog6_fifo_server src/prog6_fifo_server.c
+
+
+run-fifo-server: $(BIN)/prog6_fifo_server
+	./$(BIN)/prog6_fifo_server
+
+
+# ============================================================
+# PRACTICAL 6 - FIFO CLIENT
+# ============================================================
+
+$(BIN)/prog6_fifo_client: src/prog6_fifo_client.c
+	mkdir -p $(BIN)
+	$(CC) $(CFLAGS) -o $(BIN)/prog6_fifo_client src/prog6_fifo_client.c
+
+
+run-fifo-client: $(BIN)/prog6_fifo_client
+	./$(BIN)/prog6_fifo_client
+
+
+# ============================================================
+# PRACTICAL 6 - POSIX SIGNAL HANDLING
+# ============================================================
+
+$(BIN)/signal_handler: src/signal_handler.c
+	mkdir -p $(BIN)
+	$(CC) $(CFLAGS) -o $(BIN)/signal_handler src/signal_handler.c
+
+
+run-signal: $(BIN)/signal_handler
+	./$(BIN)/signal_handler
+
+
+# ============================================================
+# CLEAN
+# ============================================================
+
 clean:
-	rm -rf bin/*
+	rm -f $(BIN)/shellforge
+	rm -f $(BIN)/prog2
+	rm -f $(BIN)/process
+	rm -f $(BIN)/wait_waitpid_demo
+	rm -f $(BIN)/zombie_process
+	rm -f $(BIN)/prog5
+	rm -f $(BIN)/ls_grep_pipe
+	rm -f $(BIN)/prog6_fifo_server
+	rm -f $(BIN)/prog6_fifo_client
+	rm -f $(BIN)/signal_handler
+
+	rm -f /tmp/server_fifo
+	rm -f /tmp/client_*_fifo
