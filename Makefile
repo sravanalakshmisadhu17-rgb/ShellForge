@@ -1,175 +1,162 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -g -Iinclude
 
-BIN = bin
+SRC = src/main.c
+TARGET = bin/shellforge
 
-.PHONY: all run clean \
-        run-prog2 run-process run-wait run-zombie \
-        run-prog5 run-ls-grep \
-        run-fifo-server run-fifo-client run-signal
+.PHONY: all build run clean
 
+# ==============================
+# Default ShellForge Build
+# ==============================
 
-# ============================================================
-# ALL
-# ============================================================
+all: build
 
-all: $(BIN)/shellforge \
-     $(BIN)/prog2 \
-     $(BIN)/process \
-     $(BIN)/wait_waitpid_demo \
-     $(BIN)/zombie_process \
-     $(BIN)/prog5 \
-     $(BIN)/ls_grep_pipe \
-     $(BIN)/prog6_fifo_server \
-     $(BIN)/prog6_fifo_client \
-     $(BIN)/signal_handler
+build: $(TARGET)
 
+$(TARGET): $(SRC) include/shell.h
+	mkdir -p bin
+	$(CC) $(CFLAGS) $(SRC) -o $(TARGET)
 
-# ============================================================
-# WEEK 1 - SHELLFORGE REPL
-# ============================================================
+run: build
+	./$(TARGET)
 
-$(BIN)/shellforge: src/main.c include/shell.h
-	mkdir -p $(BIN)
-	$(CC) $(CFLAGS) -o $(BIN)/shellforge src/main.c
+# ==============================
+# Practical 2 - File Copy
+# ==============================
 
+prog2: src/prog2.c
+	$(CC) $(CFLAGS) src/prog2.c -o bin/prog2
 
-run: $(BIN)/shellforge
-	./$(BIN)/shellforge
+run-prog2: prog2
+	./bin/prog2
 
+# ==============================
+# Practical 3 - wait / waitpid
+# ==============================
 
-# ============================================================
-# PRACTICAL 2 - FILE COPY
-# ============================================================
+wait_waitpid_demo: src/wait_waitpid_demo.c
+	$(CC) $(CFLAGS) src/wait_waitpid_demo.c -o bin/wait_waitpid_demo
 
-$(BIN)/prog2: src/prog2.c
-	mkdir -p $(BIN)
-	$(CC) $(CFLAGS) -o $(BIN)/prog2 src/prog2.c
+run-wait: wait_waitpid_demo
+	./bin/wait_waitpid_demo
 
+# ==============================
+# Practical 4 - Zombie Process
+# ==============================
 
-run-prog2: $(BIN)/prog2
-	./$(BIN)/prog2
+zombie_process: src/zombie_process.c
+	$(CC) $(CFLAGS) src/zombie_process.c -o bin/zombie_process
 
+run-zombie: zombie_process
+	./bin/zombie_process
 
-# ============================================================
-# PRACTICAL 3 - FORK / PROCESS
-# ============================================================
+# ==============================
+# Practical 5 - Pipes
+# ==============================
 
-$(BIN)/process: src/process.c
-	mkdir -p $(BIN)
-	$(CC) $(CFLAGS) -o $(BIN)/process src/process.c
+prog5: src/prog5.c
+	$(CC) $(CFLAGS) src/prog5.c -o bin/prog5
 
+run-prog5: prog5
+	./bin/prog5
 
-run-process: $(BIN)/process
-	./$(BIN)/process
+# ==============================
+# Practical 6 - FIFO
+# ==============================
 
+prog6_fifo_server: src/prog6_fifo_server.c
+	$(CC) $(CFLAGS) src/prog6_fifo_server.c -o bin/prog6_fifo_server
 
-# ============================================================
-# PRACTICAL 4 - WAIT / WAITPID
-# ============================================================
+prog6_fifo_client: src/prog6_fifo_client.c
+	$(CC) $(CFLAGS) src/prog6_fifo_client.c -o bin/prog6_fifo_client
 
-$(BIN)/wait_waitpid_demo: src/wait_waitpid_demo.c
-	mkdir -p $(BIN)
-	$(CC) $(CFLAGS) -o $(BIN)/wait_waitpid_demo src/wait_waitpid_demo.c
+run-fifo-server: prog6_fifo_server
+	./bin/prog6_fifo_server
 
+run-fifo-client: prog6_fifo_client
+	./bin/prog6_fifo_client
 
-run-wait: $(BIN)/wait_waitpid_demo
-	./$(BIN)/wait_waitpid_demo
+# ==============================
+# Practical 7 - Memory Management
+# ==============================
 
+memory_demo: src/memory_demo.c
+	$(CC) $(CFLAGS) src/memory_demo.c -o bin/memory_demo
 
-# ============================================================
-# PRACTICAL 4 - ZOMBIE PROCESS
-# ============================================================
+prog7_linuxaddr: src/prog7_linuxaddr.c
+	$(CC) $(CFLAGS) src/prog7_linuxaddr.c -o bin/prog7_linuxaddr
 
-$(BIN)/zombie_process: src/zombie_process.c
-	mkdir -p $(BIN)
-	$(CC) $(CFLAGS) -o $(BIN)/zombie_process src/zombie_process.c
+run-memory: memory_demo
+	./bin/memory_demo
 
+run-linuxaddr: prog7_linuxaddr
+	./bin/prog7_linuxaddr
 
-run-zombie: $(BIN)/zombie_process
-	./$(BIN)/zombie_process
+# ==============================
+# Practical 8 - Dynamic Memory
+# ==============================
 
+dynamic_memory: src/dynamic_memory.c
+	$(CC) $(CFLAGS) src/dynamic_memory.c -o bin/dynamic_memory
 
-# ============================================================
-# PRACTICAL 5 - ANONYMOUS PIPE PRODUCER / CONSUMER
-# ============================================================
+cow_demo: src/cow_demo.c
+	$(CC) $(CFLAGS) src/cow_demo.c -o bin/cow_demo
 
-$(BIN)/prog5: src/prog5.c
-	mkdir -p $(BIN)
-	$(CC) $(CFLAGS) -o $(BIN)/prog5 src/prog5.c
+run-dynamic-memory: dynamic_memory
+	./bin/dynamic_memory
 
+run-cow: cow_demo
+	./bin/cow_demo
 
-run-prog5: $(BIN)/prog5
-	./$(BIN)/prog5
+# ==============================
+# Practical 9 - File I/O
+# ==============================
 
+copy_lowlevel: src/copy_lowlevel.c
+	$(CC) -Wall -Wextra -O2 src/copy_lowlevel.c -o bin/copy_lowlevel
 
-# ============================================================
-# PRACTICAL 5 - ls | grep PIPELINE
-# ============================================================
+copy_stdio: src/copy_stdio.c
+	$(CC) -Wall -Wextra -O2 src/copy_stdio.c -o bin/copy_stdio
 
-$(BIN)/ls_grep_pipe: src/ls_grep_pipe.c
-	mkdir -p $(BIN)
-	$(CC) $(CFLAGS) -o $(BIN)/ls_grep_pipe src/ls_grep_pipe.c
+redirect_output: src/redirect_output.c
+	$(CC) -Wall -Wextra -g src/redirect_output.c -o bin/redirect_output
 
+redirect_input: src/redirect_input.c
+	$(CC) -Wall -Wextra -g src/redirect_input.c -o bin/redirect_input
 
-run-ls-grep: $(BIN)/ls_grep_pipe
-	./$(BIN)/ls_grep_pipe
+practical9: copy_lowlevel copy_stdio redirect_output redirect_input
+	@echo "Practical 9 programs compiled successfully."
 
+run-copy-lowlevel: copy_lowlevel
+	./bin/copy_lowlevel src/input_practical9.txt src/output_low.txt
 
-# ============================================================
-# PRACTICAL 6 - FIFO SERVER
-# ============================================================
+run-copy-stdio: copy_stdio
+	./bin/copy_stdio src/input_practical9.txt src/output_stdio.txt
 
-$(BIN)/prog6_fifo_server: src/prog6_fifo_server.c
-	mkdir -p $(BIN)
-	$(CC) $(CFLAGS) -o $(BIN)/prog6_fifo_server src/prog6_fifo_server.c
+run-redirect-output: redirect_output
+	./bin/redirect_output
 
+run-redirect-input: redirect_input
+	./bin/redirect_input
 
-run-fifo-server: $(BIN)/prog6_fifo_server
-	./$(BIN)/prog6_fifo_server
-
-
-# ============================================================
-# PRACTICAL 6 - FIFO CLIENT
-# ============================================================
-
-$(BIN)/prog6_fifo_client: src/prog6_fifo_client.c
-	mkdir -p $(BIN)
-	$(CC) $(CFLAGS) -o $(BIN)/prog6_fifo_client src/prog6_fifo_client.c
-
-
-run-fifo-client: $(BIN)/prog6_fifo_client
-	./$(BIN)/prog6_fifo_client
-
-
-# ============================================================
-# PRACTICAL 6 - POSIX SIGNAL HANDLING
-# ============================================================
-
-$(BIN)/signal_handler: src/signal_handler.c
-	mkdir -p $(BIN)
-	$(CC) $(CFLAGS) -o $(BIN)/signal_handler src/signal_handler.c
-
-
-run-signal: $(BIN)/signal_handler
-	./$(BIN)/signal_handler
-
-
-# ============================================================
-# CLEAN
-# ============================================================
+# ==============================
+# Clean
+# ==============================
 
 clean:
-	rm -f $(BIN)/shellforge
-	rm -f $(BIN)/prog2
-	rm -f $(BIN)/process
-	rm -f $(BIN)/wait_waitpid_demo
-	rm -f $(BIN)/zombie_process
-	rm -f $(BIN)/prog5
-	rm -f $(BIN)/ls_grep_pipe
-	rm -f $(BIN)/prog6_fifo_server
-	rm -f $(BIN)/prog6_fifo_client
-	rm -f $(BIN)/signal_handler
-
-	rm -f /tmp/server_fifo
-	rm -f /tmp/client_*_fifo
+	rm -f bin/shellforge
+	rm -f bin/prog2
+	rm -f bin/wait_waitpid_demo
+	rm -f bin/zombie_process
+	rm -f bin/prog5
+	rm -f bin/prog6_fifo_server
+	rm -f bin/prog6_fifo_client
+	rm -f bin/memory_demo
+	rm -f bin/prog7_linuxaddr
+	rm -f bin/dynamic_memory
+	rm -f bin/cow_demo
+	rm -f bin/copy_lowlevel
+	rm -f bin/copy_stdio
+	rm -f bin/redirect_output
+	rm -f bin/redirect_input
